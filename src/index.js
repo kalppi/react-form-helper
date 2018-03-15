@@ -50,11 +50,26 @@ const SingleRow = (props) => {
 	</div>;
 }
 
-const Field = ({name, text, value, sub, style, size}) =>
-	<div style={style} className={sub ? `form-group col-sm-${size}` : 'form-group'}>
+const Field = ({name, text, value, sub, style, size, editable}) => {
+	let element = <input type='text' id={`info-${name}`} value={value || ''} className='form-control' />;
+
+	let options = {
+		type: 'text',
+		id: `info-${name}`,
+		value: value || '',
+		className: 'form-control'
+	}
+
+	if(editable === false) {
+		options.className = 'form-control-plaintext';
+		options.readOnly = 'readOnly';
+	}
+
+	return <div style={style} className={sub ? `form-group col-sm-${size}` : 'form-group'}>
 		<label htmlFor={`info-${name}`} className='col-form-label'>{text ? text : name}</label>
-		<input type='text' id={`info-${name}`} value={value || ''} className='form-control' />
+		<input {...options} />
 	</div>;
+};
 
 export { SingleRow, Field };
 
