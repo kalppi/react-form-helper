@@ -53,7 +53,7 @@ const SingleRow = (props) => {
 const Field = ({name, text, value, sub, style, size}) =>
 	<div style={style} className={sub ? `form-group col-sm-${size}` : 'form-group'}>
 		<label htmlFor={`info-${name}`} className='col-form-label'>{text ? text : name}</label>
-		<input type='text' id={`info-${name}`} value={value} className='form-control' />
+		<input type='text' id={`info-${name}`} value={value || ''} className='form-control' />
 	</div>;
 
 export { SingleRow, Field };
