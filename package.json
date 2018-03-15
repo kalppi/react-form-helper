@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack --watch",
-    "build": "webpack"
+    "build": "webpack",
+    "preinstall": "npm run build"
   },
   "author": "Jarno Luukkonen",
   "license": "ISC",
