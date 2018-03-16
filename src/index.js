@@ -91,15 +91,6 @@ class Field extends Component {
 		this.setValue(e.target.value);
 
 		if(this.props.onChange) this.props.onChange(this.props.form);
-
-		return;
-		return new Promise((resolve, reject) => {
-			const value = e.target.value;
-
-			this.setValue(value);
-
-			resolve();
-		});
 	}
 
 	render() {
@@ -195,4 +186,3 @@ class Button extends Component {
 }
 
 export { SingleRow, Field, Form, Button };
-
