@@ -61,6 +61,7 @@ class SingleRow extends Component {
 						values: this.props.values,
 						onChange: this.props.onChange,
 						save: this.props.save,
+						format: this.props.format,
 						ref: ref => {
 							if(ref) {
 								this.elements[child.props.name] = ref
@@ -94,7 +95,7 @@ class Field extends Component {
 	}
 
 	render() {
-		const {form, onChange, prefix, name, text, values, sub, style, size, editable} = this.props;
+		const {form, format, onChange, prefix, name, text, values, sub, style, size, editable} = this.props;
 		let id = name;
 
 		if(prefix) {
@@ -107,10 +108,12 @@ class Field extends Component {
 			value = values[name];
 		}
 
+		let val = typeof value === 'object' ? value.text : value;
+
 		let options = {
 			type: 'text',
 			id: id,
-			value: typeof value === 'object' ? value.text : value,
+			value: val,
 			name: name,
 			className: 'form-control',
 			onChange: this.onChange.bind(this)
@@ -119,6 +122,10 @@ class Field extends Component {
 		if(editable === false) {
 			options.className = 'form-control-plaintext';
 			options.readOnly = 'readOnly';
+		}
+
+		if(format) {
+			options.value = format(name, options.value);	
 		}
 
 		return <div style={style} className={sub ? `form-group col-sm-${size}` : 'form-group'}>
@@ -146,7 +153,8 @@ class Form extends Component {
 			},
 			onChange: this.props.onChange,
 			form: this,
-			save: this.props.save
+			save: this.props.save,
+			format: this.props.format
 		};
 
 		if(this.props.name) {
