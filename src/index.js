@@ -91,11 +91,13 @@ class Field extends Component {
 	}
 
 	onChange(e) {
-		this.setState({value: e.target.value});
+		return new Promise((resolve, reject) => {
+			this.setState({value: e.target.value}, resolve);
+		});
 	}
 
 	render() {
-		const {prefix, name, text, value, sub, style, size, editable} = this.props;
+		const {form, onChange, prefix, name, text, value, sub, style, size, editable} = this.props;
 		let id = name;
 
 		if(prefix) {
@@ -105,10 +107,14 @@ class Field extends Component {
 		let options = {
 			type: 'text',
 			id: id,
-			value: this.state.value,
+			value: typeof this.state.value === 'object' ? this.state.value.text : this.state.value,
 			name: name,
 			className: 'form-control',
-			onChange: this.onChange.bind(this)
+			onChange: e => {
+				this.onChange(e).then(() => {
+					this.props.onChange(this.props.form);
+				})
+			}
 		}
 
 		if(editable === false) {
@@ -159,16 +165,8 @@ class Form extends Component {
 	getValues() {
 		const data = {};
 
-		for(let el of this.form.elements) {
-			if(el.id) {
-				let id = el.id;
-
-				if(this.props.name) {
-					id = id.replace(new RegExp('^' + this.props.name + '\-'), '');
-				}
-
-				data[id] = el.value;
-			}
+		for(let name in this.elements) {
+			data[name] = this.elements[name].state.value;
 		}
 
 		return data;
@@ -178,14 +176,16 @@ class Form extends Component {
 		this.elements = {};
 		
 		const opts = {
-			ref: ref =>  ref && ref.getElements && Object.assign(this.elements, ref.getElements())
+			ref: ref =>  ref && ref.getElements && Object.assign(this.elements, ref.getElements()),
+			onChange: this.props.onChange,
+			form: this
 		};
 
 		if(this.props.name) {
 			opts.prefix = this.props.name;
 		}
 
-		const form = <form ref={ref => this.form = ref} onChange={e => this.props.onChange(this)} onSubmit={e => {
+		const form = <form ref={ref => this.form = ref} onSubmit={e => {
 				e.preventDefault();
 
 				if(this.props.onSubmit) this.props.onSubmit(this);
