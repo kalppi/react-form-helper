@@ -90,7 +90,7 @@ class Field extends Component {
 	onChange(e) {
 		this.setValue(e.target.value);
 
-		this.props.onChange(this.props.form);
+		if(this.props.onChange) this.props.onChange(this.props.form);
 
 		return;
 		return new Promise((resolve, reject) => {
