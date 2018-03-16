@@ -58,7 +58,14 @@ class SingleRow extends Component {
 						style: style,
 						size: size,
 						prefix: this.props.prefix,
-						ref: ref => this.elements[child.props.name] = ref
+						values: this.props.values,
+						onChange: this.props.onChange,
+						save: this.props.save,
+						ref: ref => {
+							if(ref) {
+								this.elements[child.props.name] = ref
+							}
+						}
 					});
 				})
 			}
@@ -70,14 +77,6 @@ class SingleRow extends Component {
 class Field extends Component {
 	constructor(props) {
 		super(props);
-
-		this.state = {
-			value: ''
-		};
-
-		if(props.value) {
-			this.state.value = props.value;
-		}
 	}
 
 	getElements() {
@@ -85,36 +84,45 @@ class Field extends Component {
 	}
 
 	setValue(value) {
-		return new Promise((resolve, reject) => {
-			this.setState({value: value}, resolve);
-		});
+		this.props.save({[this.props.name]: value});
 	}
 
 	onChange(e) {
+		this.setValue(e.target.value);
+
+		this.props.onChange(this.props.form);
+
+		return;
 		return new Promise((resolve, reject) => {
-			this.setState({value: e.target.value}, resolve);
+			const value = e.target.value;
+
+			this.setValue(value);
+
+			resolve();
 		});
 	}
 
 	render() {
-		const {form, onChange, prefix, name, text, value, sub, style, size, editable} = this.props;
+		const {form, onChange, prefix, name, text, values, sub, style, size, editable} = this.props;
 		let id = name;
 
 		if(prefix) {
 			id = prefix + '-' + name;
 		}
 
+		let value = '';
+
+		if(values[name]) {
+			value = values[name];
+		}
+
 		let options = {
 			type: 'text',
 			id: id,
-			value: typeof this.state.value === 'object' ? this.state.value.text : this.state.value,
+			value: typeof value === 'object' ? value.text : value,
 			name: name,
 			className: 'form-control',
-			onChange: e => {
-				this.onChange(e).then(() => {
-					this.props.onChange(this.props.form);
-				})
-			}
+			onChange: this.onChange.bind(this)
 		}
 
 		if(editable === false) {
@@ -136,54 +144,25 @@ class Form extends Component {
 		this.elements = [];
 	}
 
-	setValues(values) {
-		return new Promise((resolve, reject) => {
-			const promises = [];
-
-			for(let key in this.elements) {
-				if(values[key] !== undefined) {
-					promises.push(this.elements[key].setValue(values[key]));
-				}
-			}
-
-			Promise.all(promises).then(resolve);
-		});
-	}
-
-	clearValues() {
-		return new Promise((resolve, reject) => {
-			const promises = [];
-
-			for(let key in this.elements) {
-				promises.push(this.elements[key].setValue(''));
-			}
-
-			Promise.all(promises).then(resolve);
-		});
-	}
-
-	getValues() {
-		const data = {};
-
-		for(let name in this.elements) {
-			data[name] = this.elements[name].state.value;
-		}
-
-		return data;
-	}
-
 	render() {
 		this.elements = {};
 		
 		const opts = {
-			ref: ref =>  ref && ref.getElements && Object.assign(this.elements, ref.getElements()),
+			ref: ref =>  {
+				if(ref && ref.getElements) {
+					Object.assign(this.elements, ref.getElements());
+				}
+			},
 			onChange: this.props.onChange,
-			form: this
+			form: this,
+			save: this.props.save
 		};
 
 		if(this.props.name) {
 			opts.prefix = this.props.name;
 		}
+
+		const values = this.props.values || {};
 
 		const form = <form ref={ref => this.form = ref} onSubmit={e => {
 				e.preventDefault();
@@ -196,7 +175,7 @@ class Form extends Component {
 				const el = React.cloneElement(child, {
 					...opts,
 					key: index,
-					value: this.props.values ? this.props.values[child.props.name] : null
+					values: values
 				});
 
 				return el;
@@ -207,5 +186,13 @@ class Form extends Component {
 	}
 }
 
-export { SingleRow, Field, Form };
+class Button extends Component {
+	render() {
+		const { text, enabled = true} = this.props;
+
+		return <button className='btn' disabled={!enabled}>{text}</button>;
+	}
+}
+
+export { SingleRow, Field, Form, Button };
 
