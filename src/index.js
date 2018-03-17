@@ -144,8 +144,14 @@ class Field extends Component {
 			options.readOnly = 'readOnly';
 		}
 
+		let label = null;
+
+		if(this.props.label !== false) {
+			label = <label htmlFor={id} className='col-form-label'>{text ? text : name}</label>;
+		}
+
 		return <div style={style} className={sub ? `form-group col-sm-${size}` : 'form-group'}>
-			<label htmlFor={id} className='col-form-label'>{text ? text : name}</label>
+			{label}
 			<input {...options} />
 		</div>;
 	};
