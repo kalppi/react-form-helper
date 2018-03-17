@@ -119,7 +119,7 @@ class Field extends Component {
 
 		let value = undefined;
 
-		if(values[name]) {
+		if(values[name] !== undefined) {
 			value = values[name];
 		}
 
@@ -132,7 +132,7 @@ class Field extends Component {
 		let options = {
 			type: 'text',
 			id: id,
-			value: value,
+			value: value.toString(),
 			name: name,
 			className: 'form-control',
 			onChange: this.onChange.bind(this),
@@ -161,7 +161,15 @@ class Form extends Component {
 	constructor(props) {
 		super(props);
 
-		this.elements = [];
+		this.elements = {};
+	}
+
+	setValue(name, value) {
+		const el = this.elements[name];
+
+		if(el) {
+			el.setValue(value);
+		}
 	}
 
 	render() {
@@ -211,9 +219,9 @@ class Form extends Component {
 
 class Button extends Component {
 	render() {
-		const { text, enabled = true} = this.props;
+		const { text, enabled = true, className = '', onClick} = this.props;
 
-		return <button className='btn' disabled={!enabled}>{text}</button>;
+		return <button className={`btn ${className}`} disabled={!enabled} onClick={onClick}>{text}</button>;
 	}
 }
 
