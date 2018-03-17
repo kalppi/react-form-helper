@@ -62,6 +62,8 @@ class SingleRow extends Component {
 						onChange: this.props.onChange,
 						save: this.props.save,
 						format: this.props.format,
+						parse: this.props.parse,
+						onBlur: this.props.onBlur,
 						ref: ref => {
 							if(ref) {
 								this.elements[child.props.name] = ref
@@ -89,43 +91,57 @@ class Field extends Component {
 	}
 
 	onChange(e) {
-		this.setValue(e.target.value);
+		let value = e.target.value;
+
+		if(this.props.parse) value = this.props.parse(this.props.name, value);
+
+		this.setValue(value);
 
 		if(this.props.onChange) this.props.onChange(this.props.form);
 	}
 
+	onBlur(e) {
+		if(this.props.onBlur) {
+			let value = this.props.values[this.props.name];
+			
+			value = this.props.onBlur(this.props.name, value);
+			this.setValue(value);
+		}
+	}
+
 	render() {
-		const {form, format, onChange, prefix, name, text, values, sub, style, size, editable} = this.props;
+		let {form, format, onChange, prefix, name, text, values, sub, style, size, editable} = this.props;
 		let id = name;
 
 		if(prefix) {
 			id = prefix + '-' + name;
 		}
 
-		let value = '';
+		let value = undefined;
 
 		if(values[name]) {
 			value = values[name];
 		}
 
-		let val = typeof value === 'object' ? value.text : value;
+		if(format && value !== undefined) {
+		 	value = format(name, value);	
+		}
+
+		if(value === undefined) value = '';
 
 		let options = {
 			type: 'text',
 			id: id,
-			value: val,
+			value: value,
 			name: name,
 			className: 'form-control',
-			onChange: this.onChange.bind(this)
+			onChange: this.onChange.bind(this),
+			onBlur: this.onBlur.bind(this)
 		}
 
 		if(editable === false) {
 			options.className = 'form-control-plaintext';
 			options.readOnly = 'readOnly';
-		}
-
-		if(format) {
-			options.value = format(name, options.value);	
 		}
 
 		return <div style={style} className={sub ? `form-group col-sm-${size}` : 'form-group'}>
@@ -154,7 +170,9 @@ class Form extends Component {
 			onChange: this.props.onChange,
 			form: this,
 			save: this.props.save,
-			format: this.props.format
+			format: this.props.format,
+			parse: this.props.parse,
+			onBlur: this.props.onBlur
 		};
 
 		if(this.props.name) {
