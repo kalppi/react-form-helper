@@ -64,6 +64,7 @@ class SingleRow extends Component {
 						format: this.props.format,
 						parse: this.props.parse,
 						onBlur: this.props.onBlur,
+						errors: this.props.errors,
 						ref: ref => {
 							if(ref) {
 								this.elements[child.props.name] = ref
@@ -110,7 +111,7 @@ class Field extends Component {
 	}
 
 	render() {
-		let {form, format, onChange, prefix, name, text, values, sub, style, size, editable} = this.props;
+		let {form, format, onChange, prefix, name, text, values, sub, style, size, editable, errors} = this.props;
 		let id = name;
 
 		if(prefix) {
@@ -137,6 +138,10 @@ class Field extends Component {
 			className: 'form-control',
 			onChange: this.onChange.bind(this),
 			onBlur: this.onBlur.bind(this)
+		};
+
+		if(errors.includes(name)) {
+			options.className += ' error';
 		}
 
 		if(editable === false) {
@@ -186,7 +191,8 @@ class Form extends Component {
 			save: this.props.save,
 			format: this.props.format,
 			parse: this.props.parse,
-			onBlur: this.props.onBlur
+			onBlur: this.props.onBlur,
+			errors: this.props.errors
 		};
 
 		if(this.props.name) {
@@ -202,7 +208,7 @@ class Form extends Component {
 			}}>
 			{ this.props.children.map((child, index) => {
 				if(!child) return null;
-
+				
 				const el = React.cloneElement(child, {
 					...opts,
 					key: index,
