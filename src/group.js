@@ -30,8 +30,8 @@ export class Group extends Component {
 						parse: this.props.parse,
 						onBlur: this.props.onBlur,
 						ref: ref => {
-							if(ref) {
-								this.elements[child.props.name] = ref
+							if(ref && ref.getElements) {
+								this.elements = Object.assign(this.elements, ref.getElements());
 							}
 						}
 					});

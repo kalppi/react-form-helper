@@ -21,7 +21,7 @@ export class Form extends Component {
 		const opts = {
 			ref: ref =>  {
 				if(ref && ref.getElements) {
-					Object.assign(this.elements, ref.getElements());
+					this.elements = Object.assign(this.elements, ref.getElements());
 				}
 			},
 			onChange: this.props.onChange,
