@@ -36,9 +36,17 @@ export class SingleRow extends Component {
 			}
 		}
 
-		return <div className='row'>
+		let className = 'row';
+
+		if(this.props.className) {
+			className += ` ${this.props.className}`;
+		}
+
+		return <div className={className}>
 			{
 				React.Children.map(this.props.children, (child, index) => {
+					if(!child) return;
+
 					let style = {};
 
 					if(index < this.props.children.length - 1) {

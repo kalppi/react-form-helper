@@ -2,8 +2,28 @@ import React, { Component } from 'react';
 
 export class Button extends Component {
 	render() {
-		const { text, enabled = true, className = '', onClick} = this.props;
+		const { text, enabled = true, className = '', onClick, sub, size, style} = this.props;
 
-		return <button className={`btn ${className}`} disabled={!enabled} onClick={onClick}>{text}</button>;
+		let cl = '';
+
+		if(sub) {
+			cl = `col-sm-${size}`;
+		}
+
+		return <div
+				style={style}
+				className={cl}
+			><button
+				className={`btn ${className}`}
+				disabled={!enabled}
+				onClick={e => {
+					e.preventDefault();
+
+					if(onClick) {
+						onClick();
+					}
+				}}>
+					{text}
+			</button></div>;
 	}
 }

@@ -77,7 +77,7 @@ export class Field extends Component {
 			label = <label htmlFor={id} className='col-form-label'>{text ? text : name}</label>;
 		}
 
-		return <div style={style} className={sub ? `form-group col-sm-${size}` : 'form-group'}>
+		return <div style={style} className={sub ? ` col-sm-${size}` : ''}>
 			{label}
 			<input {...options} />
 		</div>;

@@ -14,7 +14,7 @@ export class Group extends Component {
 	render() {
 		this.elements = {};
 
-		return <fieldset className='form-group group'>
+		return <fieldset className='group'>
 		<legend>{this.props.text}</legend>
 			{
 				React.Children.map(this.props.children, (child, index) => {
