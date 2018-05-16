@@ -17,9 +17,9 @@ export class Button extends Component {
 				className={`btn ${className}`}
 				disabled={!enabled}
 				onClick={e => {
-					e.preventDefault();
-
 					if(onClick) {
+						e.preventDefault();
+						
 						onClick();
 					}
 				}}>
