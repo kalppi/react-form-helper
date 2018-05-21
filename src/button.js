@@ -1,8 +1,28 @@
 import React, { Component } from 'react';
 
 export class Button extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			text: this.props.text
+		};
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if(nextProps.text) {
+			this.setState({
+				text: nextProps.text
+			});
+		}
+	}
+
+	getElements() {
+		return {[this.props.name]: this};
+	}
+	
 	render() {
-		const { text, enabled = true, className = '', onClick, sub, size, style} = this.props;
+		const { enabled = true, className = '', onClick, sub, size, style} = this.props;
 
 		let cl = '';
 
@@ -22,8 +42,7 @@ export class Button extends Component {
 						
 						onClick();
 					}
-				}}>
-					{text}
+				}}>{this.state.text}{this.props.children}
 			</button></div>;
 	}
 }

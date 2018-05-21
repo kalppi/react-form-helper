@@ -15,6 +15,14 @@ export class Form extends Component {
 		}
 	}
 
+	setText(name, text) {
+		const el = this.elements[name];
+
+		if(el) {
+			el.setState({ text });
+		}
+	}
+
 	render() {
 		this.elements = {};
 		

@@ -33,7 +33,7 @@ export class Field extends Component {
 	}
 
 	render() {
-		let {form, format, onChange, prefix, name, text, values, sub, style, size, editable, errors} = this.props;
+		let {form, format, onChange, prefix, name, text, values, sub, style, size, editable, errors, type} = this.props;
 		let id = name;
 
 		if(prefix) {
@@ -53,7 +53,7 @@ export class Field extends Component {
 		if(value === undefined) value = '';
 
 		let options = {
-			type: 'text',
+			type: type || 'text',
 			id: id,
 			value: value.toString(),
 			name: name,
@@ -73,13 +73,17 @@ export class Field extends Component {
 
 		let label = null;
 
-		if(this.props.label !== false) {
+		if(this.props.label !== false && type !== 'hidden') {
 			label = <label htmlFor={id} className='col-form-label'>{text ? text : name}</label>;
 		}
 
-		return <div style={style} className={sub ? ` col-sm-${size}` : ''}>
-			{label}
-			<input {...options} />
-		</div>;
+		if(type === 'hidden') {
+			return <input {...options} />;
+		} else {
+			return <div style={style} className={sub ? ` col-sm-${size}` : ''}>
+				{label}
+				<input {...options} />
+			</div>;
+		}
 	};
 }
