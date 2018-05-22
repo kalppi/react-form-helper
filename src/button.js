@@ -22,7 +22,7 @@ export class Button extends Component {
 	}
 	
 	render() {
-		const { enabled = true, className = '', onClick, sub, size, style} = this.props;
+		let { enabled = true, className = '', onClick, sub, size, style, type} = this.props;
 
 		let cl = '';
 
@@ -30,12 +30,16 @@ export class Button extends Component {
 			cl = `col-sm-${size}`;
 		}
 
+
+		if(type === undefined) type = 'button';
+
 		return <div
 				style={style}
 				className={cl}
 			><button
 				className={`btn ${className}`}
 				disabled={!enabled}
+				type={type}
 				onClick={e => {
 					if(onClick) {
 						e.preventDefault();
